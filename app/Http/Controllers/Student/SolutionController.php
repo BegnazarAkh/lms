@@ -11,25 +11,26 @@ class SolutionController extends Controller
 {
     public function store(Request $request, Task $task)
     {
-        // Ensure enrolled
-        abort_unless(
-            auth()->user()->enrolledSubjects()
-                        ->where('subjects.id',$task->subject_id)
-                        ->exists(),
-            403
-        );
+        // Ensure enrollment
+        if (! auth()->user()->enrolledSubjects()->where('subjects.id', $task->subject_id)->exists()) {
+            abort(403, 'Not enrolled in this subject');
+        }
 
+        // Validate
         $data = $request->validate([
             'content' => 'required|string|min:10',
         ]);
 
+        // Create a new solution (multiple submissions allowed)
         Solution::create([
-            'task_id' => $task->id,
-            'user_id' => auth()->id(),
-            'content' => $data['content'],
+            'task_id'  => $task->id,
+            'user_id'  => auth()->id(),
+            'content'  => $data['content'],
         ]);
 
-        return back()->with('success','Solution submitted.');
+        return redirect()
+            ->route('student.tasks.show', $task)
+            ->with('success', 'Solution submitted successfully.');
     }
 
     public function show(Solution $solution)

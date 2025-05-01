@@ -64,7 +64,13 @@
               $solution = $task->solutions->first();
             @endphp
             <tr class="border-t">
-              <td class="p-3">{{ $task->name }}</td>
+              {{-- Clickable task name --}}
+              <td class="p-3">
+                <a href="{{ route('student.tasks.show', $task) }}"
+                   class="text-blue-600 hover:underline">
+                  {{ $task->name }}
+                </a>
+              </td>
               <td class="p-3">{{ $task->points }}</td>
               <td class="p-3 text-center">
                 @if($solution)
