@@ -27,10 +27,21 @@ Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 | Authenticated & Profile
 |--------------------------------------------------------------------------
 */
-Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', fn() => view('dashboard'))
-         ->name('dashboard');
+Route::middleware(['auth','verified'])->group(function () {
+    // Role-based dashboard redirect
+    Route::get('/dashboard', function () {
+        $user = Auth::user();
 
+        // Teachers → their subjects index
+        if ($user->role === 'teacher') {
+            return redirect()->route('teacher.subjects.index');
+        }
+
+        // Students → their subjects index
+        return redirect()->route('student.subjects.index');
+    })->name('dashboard');
+
+    // Your other profile routes
     Route::get('/profile', [ProfileController::class, 'edit'])
          ->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])
