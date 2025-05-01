@@ -63,4 +63,17 @@ class SubjectController extends Controller
 
         return back()->with('success', 'Subject deleted.');
     }
+
+  
+    public function show(Subject $subject)
+    {
+        $this->authorize('view', $subject);
+
+        // Eager-load students count & list
+        $subject->loadCount('students')
+                ->load('students');
+
+        return view('teacher.subjects.show', compact('subject'));
+    }
+
 }

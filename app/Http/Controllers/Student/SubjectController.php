@@ -16,6 +16,23 @@ class SubjectController extends Controller
         return view('student.subjects.index', compact('all','enrolled'));
     }
 
+    public function show(Subject $subject)
+    {
+        // ensure the student is enrolled
+        if (! auth()->user()
+                   ->enrolledSubjects()
+                   ->where('subjects.id', $subject->id)
+                   ->exists()) {
+            abort(403, 'Not enrolled in this subject');
+        }
+
+        // eager-load counts, students, and teacher
+        $subject->loadCount('students')
+                ->load('students','teacher');
+
+        return view('student.subjects.show', compact('subject'));
+    }
+
     public function enroll(Subject $subject)
     {
         auth()->user()->enrolledSubjects()->attach($subject->id);

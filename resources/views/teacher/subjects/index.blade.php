@@ -25,8 +25,8 @@
         <tr class="border-t">
             <td class="p-3">{{ $subject->code }}</td>
             <td class="p-3">
-                <a href="{{ route('teacher.subjects.tasks.index', $subject) }}"
-                   class="text-blue-600 hover:underline">
+                <a href="{{ route('teacher.subjects.show', $subject) }}"
+                    class="text-blue-600 hover:underline">
                     {{ $subject->name }}
                 </a>
             </td>

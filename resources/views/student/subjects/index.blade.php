@@ -8,13 +8,21 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
   @foreach($all as $subj)
     <div class="bg-white p-4 rounded shadow">
-      <h2 class="text-lg font-semibold">{{ $subj->name }} ({{ $subj->code }})</h2>
+        <h2 class="text-lg font-semibold">
+            <a href="{{ route('student.subjects.show', $subj) }}"
+                class="text-blue-600 hover:underline">
+                {{ $subj->name }} ({{ $subj->code }})
+            </a>
+        </h2>
       <p class="mb-2">{{ $subj->credits }} credits</p>
       @if(in_array($subj->id, $enrolled))
         <form method="POST" action="{{ route('student.subjects.leave', $subj) }}">
           @csrf
           <button type="submit" class="px-3 py-1 bg-red-600 text-white rounded">Leave</button>
-          <a href="{{ route('student.tasks.index', $subj) }}" class="ml-2 hover:underline">View Tasks</a>
+          <a href="{{ route('student.subjects.tasks.index', $subj) }}"
+            class="ml-2 text-blue-600 hover:underline">
+            View Tasks
+        </a>
         </form>
       @else
         <form method="POST" action="{{ route('student.subjects.enroll', $subj) }}">

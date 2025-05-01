@@ -10,6 +10,7 @@ use App\Http\Controllers\Student\SubjectController as SSubjectController;
 use App\Http\Controllers\Student\TaskController     as STaskController;
 use App\Http\Controllers\Student\SolutionController as SSolutionController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Student\SubjectController as StudentSubjectController;
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -60,20 +61,28 @@ Route::middleware(['auth', 'teacher'])
          ->name('solutions.evaluate');
 });
 
-Route::middleware(['auth', 'student'])
+Route::middleware(['auth','student'])
     ->prefix('student')
     ->name('student.')
     ->group(function () {
-    // List available/enrolled subjects
-    Route::get('subjects', [SSubjectController::class, 'index'])->name('subjects.index');
-    Route::post('subjects/{subject}/enroll', [SSubjectController::class, 'enroll'])->name('subjects.enroll');
-    Route::post('subjects/{subject}/leave',  [SSubjectController::class, 'leave'])->name('subjects.leave');
+        // List available/enrolled subjects
+        // Note: this single resource generates student.subjects.index and student.subjects.show
+        Route::resource('subjects', SSubjectController::class)
+            ->only(['index','show']);
 
-    // View tasks & submit solutions
-    Route::get('subjects/{subject}/tasks', [STaskController::class, 'index'])->name('tasks.index');
-    Route::get('tasks/{task}',               [STaskController::class, 'show'])->name('tasks.show');
-    Route::post('tasks/{task}/solutions',    [SSolutionController::class, 'store'])->name('solutions.store');
-});
+        // Enroll / Leave (separate because they’re not standard RESTful)
+        Route::post('subjects/{subject}/enroll', [SSubjectController::class, 'enroll'])
+             ->name('subjects.enroll');
+        Route::post('subjects/{subject}/leave', [SSubjectController::class, 'leave'])
+             ->name('subjects.leave');
 
+        // View tasks & submit solutions
+        Route::get('subjects/{subject}/tasks', [STaskController::class, 'index'])
+             ->name('subjects.tasks.index');
+        Route::get('tasks/{task}', [STaskController::class, 'show'])
+             ->name('tasks.show');
+        Route::post('tasks/{task}/solutions', [SSolutionController::class, 'store'])
+             ->name('tasks.solutions.store');
+    });
 
 require __DIR__.'/auth.php';
