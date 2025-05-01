@@ -64,7 +64,7 @@ php artisan migrate:fresh --seed
 # Compile assets
 
 ```bash
-npm run dev
+npm install && npm run dev
 ```
 
 # Run the application
