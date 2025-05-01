@@ -17,21 +17,25 @@ class SubjectController extends Controller
     }
 
     public function show(Subject $subject)
-    {
-        // ensure the student is enrolled
-        if (! auth()->user()
-                   ->enrolledSubjects()
-                   ->where('subjects.id', $subject->id)
-                   ->exists()) {
-            abort(403, 'Not enrolled in this subject');
-        }
+{
+    $user = auth()->user();
 
-        // eager-load counts, students, and teacher
-        $subject->loadCount('students')
-                ->load('students','teacher');
-
-        return view('student.subjects.show', compact('subject'));
+    // Ensure the student is enrolled
+    if (! $user->enrolledSubjects()->where('subjects.id', $subject->id)->exists()) {
+        abort(403, 'Not enrolled in this subject');
     }
+
+    // Load tasks and any existing solution for this student
+    $subject->load([
+        'tasks' => fn($q) => $q->latest(),
+        'tasks.solutions' => fn($q) => $q->where('user_id', $user->id),
+        'teacher',
+        'students',
+    ])->loadCount('students');
+
+    return view('student.subjects.show', compact('subject'));
+}
+
 
     public function enroll(Subject $subject)
     {

@@ -31,4 +31,18 @@ class SolutionController extends Controller
 
         return back()->with('success','Solution submitted.');
     }
+
+    public function show(Solution $solution)
+    {
+        // Ensure the student owns this solution
+        if ($solution->user_id !== auth()->id()) {
+            abort(403, 'Access denied');
+        }
+
+        // Eager-load the related task & subject for context
+        $solution->load('task.subject.teacher');
+
+        return view('student.solutions.show', compact('solution'));
+    }
+
 }
