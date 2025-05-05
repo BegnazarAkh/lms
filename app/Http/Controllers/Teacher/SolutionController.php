@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Solution;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\Task;
 
 class SolutionController extends Controller
 {
@@ -30,4 +31,16 @@ class SolutionController extends Controller
 
         return back()->with('success', 'Solution evaluated.');
     }
+
+    public function index(Task $task)
+    {
+        // Ensure the logged-in teacher owns this task’s subject
+        $this->authorize('view', $task->subject);
+
+        // Eager-load students on each solution
+        $solutions = $task->solutions()->with('student')->latest()->get();
+
+        return view('teacher.solutions.index', compact('task','solutions'));
+    }
+
 }

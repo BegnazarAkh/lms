@@ -66,6 +66,9 @@ Route::middleware(['auth', 'teacher'])
     Route::resource('subjects.tasks', TTaskController::class)
          ->shallow();
 
+    Route::get('tasks/{task}/solutions', [TSolutionController::class, 'index'])
+     ->name('solutions.index');
+
     // View & evaluate individual solutions
     Route::get('solutions/{solution}', [TSolutionController::class, 'show'])
          ->name('solutions.show');

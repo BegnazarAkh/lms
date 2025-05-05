@@ -16,7 +16,7 @@
         <tr>
             <th class="p-3 text-left">Name</th>
             <th class="p-3 text-left">Points</th>
-            <th class="p-3">Actions</th>
+            <th class="p-3 text-center">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -30,14 +30,22 @@
             </td>
             <td class="p-3">{{ $task->points }}</td>
             <td class="p-3 space-x-2 text-center">
-                <a href="{{ route('teacher.tasks.edit', $task) }}">Edit</a>
+                <a href="{{ route('teacher.tasks.edit', $task) }}"
+                   class="text-indigo-600 hover:underline">
+                    Edit
+                </a>
                 <form action="{{ route('teacher.tasks.destroy', $task) }}"
                       method="POST" class="inline" onsubmit="return confirm('Remove task?')">
-                    @csrf @method('DELETE')
-                    <button type="submit" class="text-red-600">Delete</button>
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="text-red-600 hover:underline">
+                        Delete
+                    </button>
                 </form>
-                <a href="{{ route('teacher.solutions.show', $task->solutions->first() ?? 0) }}"
-                   class="hover:text-green-600">Solutions</a>
+                <a href="{{ route('teacher.solutions.index', $task) }}"
+                   class="text-green-600 hover:underline">
+                    Solutions
+                </a>
             </td>
         </tr>
         @empty
@@ -47,4 +55,3 @@
         @endforelse
     </tbody>
 </table>
-@endsection

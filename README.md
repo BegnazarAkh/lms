@@ -38,7 +38,7 @@ Use the following credentials to sign in as a student:
 
 ```bash
 git clone https://github.com/BegnazarAkh/lms.git
-cd lms
+cd lms-main
 
 ```
 
